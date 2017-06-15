@@ -18,16 +18,25 @@ export default class syncExample extends Component {
       url: 'http://localhost:3000/sync/'
     });
 
-    RNSync.doList(this.messagesId, 
-      (res)=>{
-        // this.setState({
-        //   messages: 
-        // });
-      },
-      (err) => {
+    RNSync.notify(function(notification){
+      var code = notification.code
+      if('sync_complete' === code){
+        //a sync loop completed successfully, list the update data
+        sync.doList(datasetId,
+          function (res) {
+            console.log('Successful result from list:', JSON.stringify(res));
+          },
+          function (err) {
+            console.log('Error result from list:', JSON.stringify(err));
+          });
+      } else {
+        //choose other notifications the app is interested in and provide callbacks
       }
-    );
+    });
 
+    const queryParams = {};
+    const metaData = {};
+    RNSync.manage(this.messagesId, {}, queryParams, metaData, () => {});
   }
   
   _addNewMessage(text){

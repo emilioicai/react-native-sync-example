@@ -5,10 +5,7 @@ import { AsyncStorage } from 'react-native';
 var RNSync = {};
 
 RNSync.init = function(config) {
-  const datasetId = config.datasetId;
   const url = config.url;
-  const queryParams = {};
-  const metaData = {};
 
   sync.setStorageAdapter(function(datasetId, isSave, cb){
     cb(null, {
@@ -35,7 +32,9 @@ RNSync.init = function(config) {
         'Content-Type': 'application/json',
       },
     })
-    .then((response) => console.log(response))
+    .then((response) => {
+      console.log('-----------', response ,'-----------')
+    })
     .catch((error) => {
       console.error(error);
     });
@@ -45,28 +44,12 @@ RNSync.init = function(config) {
     "sync_frequency": 10,
     "do_console_log": true
   });
-
-  sync.notify(function(notification){
-    var code = notification.code
-    if('sync_complete' === code){
-      //a sync loop completed successfully, list the update data
-      sync.doList(datasetId,
-        function (res) {
-          console.log('Successful result from list:', JSON.stringify(res));
-          },
-        function (err) {
-          console.log('Error result from list:', JSON.stringify(err));
-        });
-    } else {
-      //choose other notifications the app is interested in and provide callbacks
-    }
-  });
-
-  sync.manage(datasetId, {}, queryParams, metaData, () => {}); 
 }
 
 RNSync.doCreate = sync.doCreate;
 RNSync.doList = sync.doList;
+RNSync.notify = sync.notify;
+RNSync.manage = sync.manage;
 
 export default RNSync;
 
